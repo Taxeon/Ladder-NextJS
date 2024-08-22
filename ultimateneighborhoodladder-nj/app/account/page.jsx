@@ -15,7 +15,7 @@ export default function page() {
   };
 
   const res=await
-  fetch(`${process.env.NEXT_PUBLIC_API_URL}/verifyToken`, {
+  fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/validate-Token`, {
     headers: {
       Cookie: `token=${token}`,
     },

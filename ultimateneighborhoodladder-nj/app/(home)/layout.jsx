@@ -7,6 +7,7 @@ export const dynamic = 'force-dynamic'
 //import { createClient } from "@/utils/supabase/server";
 
 export default async function Dashboardlayout({ children }) {
+	
 /* 	const supabase = createClient();
 	const { data, error } = await supabase.auth.getUser();
 

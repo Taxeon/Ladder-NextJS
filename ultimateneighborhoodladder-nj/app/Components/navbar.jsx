@@ -1,23 +1,38 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as FaIcons from "react-icons/fa";
 import * as AiIcons from "react-icons/ai";
-// import { Link } from 'react-router-dom';
-import "./Navbar.css";
 import { IconContext } from "react-icons";
+
 import Link from "next/link";
 import Image from "next/image";
+
+import Cookies from 'js-cookie';
+
+// import { Link } from 'react-router-dom';
+import "./Navbar.css";
 import LadderImage from "../images/LadderCompetition2.jpeg";
-import { SidebarData } from "./sidebarData";
+import { SidebarData } from "../../Resources/SidebarData";
 import { usePathname } from "next/navigation";
+import {useJwt} from "../utils/cookie/useJwt.jsx";
+
 
 function Navbar() {
 	const [sidebar, setSidebar] = useState(false);
 
-	const showSidebar = () => setSidebar(!sidebar);
-	const existsToken = localStorage.getItem('accessToken');
+	console.log('Navbar: Check for cookie')
+	const jwtValues = useJwt();
+		
+	const showSidebar = () => setSidebar(!sidebar);	
 	const currentPage = usePathname();
+
+  useEffect(() => {
+    if (jwtValues) {
+      console.log('JWT values changed:', jwtValues);
+      // Additional logic based on jwtValues
+    }
+  }, [jwtValues]);
 
 	return (
 		<>
@@ -34,8 +49,11 @@ function Navbar() {
 						quality={100}
             id="centerimage"
 					/>
-			<Link href={existsToken==null ? "/auth": "/account"} className="nav-menu-right" style={{visibility:currentPage=='/auth'?'hidden':'visible'}}>			
-				{existsToken==null ? "Login" : "Hello"}
+			<Link href={!jwtValues || jwtValues.email =='Cookie not found' ?  "/auth": "/account"} 
+						className="nav-menu-right" 
+						style={{visibility:currentPage=='/auth'?'hidden':'visible'}}
+						>			
+				{!jwtValues || jwtValues.email =='Cookie not found' ?  "Login" :   `Hello ${jwtValues.email}`}
 			</Link>
 				</div>
 				<nav className={sidebar ? "nav-menu active" : "nav-menu"}>

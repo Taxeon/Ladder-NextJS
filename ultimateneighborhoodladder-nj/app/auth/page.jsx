@@ -1,44 +1,50 @@
-'use client'
+"use client";
 import { useRouter } from "next/navigation";
-import { useState } from 'react';
-import { useAMGAuthorize } from '../api/auth/useAMGAuthorize';
-import { redirect } from 'next/dist/server/api-utils';
+import { useState } from "react";
+import { useAMGAuthorize } from "../api/useAMGAuthorize";
 
 export default function LoginPage() {
-  const existsUserToken = localStorage.getItem('accessToken');
-  const {loginUser, isLogin} = useAMGAuthorize();
-  const router = useRouter();
-  
-  if (existsUserToken != null )
-    {
-      console.log (existsUserToken)
-      router.push('/');
-    }
+	const router = useRouter();
+	const [errorMessage, setErrorMessage] = useState('');
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  
-  const handleLogin = async (event) => {
-    event.preventDefault();  
-    loginUser(email,password);
-  }
+	const { loginUser, isLogin } = useAMGAuthorize();
 
-  return (
-  
-    <form onSubmit={handleLogin}>
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="Username"
-      />
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Password"
-      />
-      <button type="submit" disabled={isLogin} >{isLogin ? 'Logging In...' : 'Submit'}</button>
-    </form>
-  );
+	const [email, setEmail] = useState("");
+	const [password, setPassword] = useState("");
+
+	const handleLogin = async (e) => {
+		e.preventDefault();
+		setErrorMessage(""); // Clear any previous errors
+
+		try {
+			await loginUser(email, password);
+			// Redirect to the home page on success
+			router.push("/"); // Navigate to the home page
+		} catch (error) {
+			setErrorMessage("Login failed. Please try again.");
+		}
+	};
+
+	return (
+		<div>
+			<form onSubmit={handleLogin}>
+				<input
+					type="email"
+					value={email}
+					onChange={(e) => setEmail(e.target.value)}
+					placeholder="Username"
+				/>
+				<input
+					type="password"
+					value={password}
+					onChange={(e) => setPassword(e.target.value)}
+					placeholder="Password"
+				/>
+				<button type="submit" disabled={isLogin}>
+					{isLogin ? "Logging In..." : "Submit"}
+				</button>
+			</form>
+			{errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
+		</div>
+	);
 }
